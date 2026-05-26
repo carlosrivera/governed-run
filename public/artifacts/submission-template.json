@@ -1,0 +1,34 @@
+{
+  "kind": "csg.skill",
+  "name": "replace-with-artifact-name",
+  "version": "0.1.0",
+  "intent": "Describe the operational problem this artifact governs in concrete terms.",
+  "riskLevel": "medium",
+  "allowedScope": [
+    "List the files, commands, tools, data, or operations an agent may use."
+  ],
+  "blockedScope": [
+    "List protected files, data, commands, operations, deployments, or costs."
+  ],
+  "evidence": [
+    "validator command",
+    "changed files",
+    "policy decision",
+    "execution trace"
+  ],
+  "escalation": {
+    "when": [
+      "The plan touches blocked scope.",
+      "Validation cannot run.",
+      "The same failure repeats after remediation."
+    ],
+    "to": "human reviewer"
+  },
+  "portableAcross": [
+    "Codex",
+    "Claude Code",
+    "CI",
+    "custom agents"
+  ],
+  "dependencies": []
+}

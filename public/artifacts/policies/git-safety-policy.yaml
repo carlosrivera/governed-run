@@ -1,0 +1,87 @@
+kind: csg.policy
+name: git-safety-policy
+version: 0.2.0
+intent: Keep autonomous repository mutations reviewable by preventing protected branch writes, destructive history operations, unrelated churn, and unvalidated merges.
+riskLevel: high
+
+allowedScope:
+  branches:
+    - feature/*
+    - hotfix/*
+    - codex/*
+  commands:
+    - git status --short
+    - git diff
+    - git diff --name-only
+    - git log
+    - git show
+    - git add
+    - git commit
+
+blockedScope:
+  branches:
+    - main
+    - master
+    - production
+    - release/*
+  commands:
+    - git push --force
+    - git push --force-with-lease
+    - git reset --hard
+    - git clean -fd
+    - git checkout -- .
+    - git rebase -i
+    - git branch -D
+
+requiredChecks:
+  beforeCommit:
+    - git status --short
+    - relevant validators for changed files
+  beforeMerge:
+    - coverage-guardian
+    - security-audit when dependencies, auth, billing, infra, or input handling changed
+    - build or typecheck
+
+decisionRules:
+  - id: protected_branch_write
+    decision: deny
+    when:
+      currentBranchMatches:
+        - main
+        - master
+        - production
+        - release/*
+    escalation: repository_owner
+
+  - id: destructive_history_operation
+    decision: deny
+    when:
+      commandMatches:
+        - git reset --hard
+        - git clean -fd
+        - git push --force
+        - git push --force-with-lease
+    escalation: repository_owner
+
+  - id: unrelated_dirty_worktree
+    decision: escalate
+    when:
+      dirtyFilesOutsideIntent: true
+    escalation: human reviewer
+
+evidence:
+  required:
+    - current_branch
+    - changed_files
+    - staged_files
+    - validator_results
+    - commit_message_if_created
+    - policy_decisions
+
+escalation:
+  when:
+    - protected branch is active
+    - destructive git command is requested
+    - existing user changes overlap the agent patch
+    - required validation did not run
+  to: repository owner

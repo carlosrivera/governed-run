@@ -1,0 +1,269 @@
+---
+import ManifestLayout from '../../layouts/ManifestLayout.astro';
+import { posts } from '../../data/posts';
+
+export async function getStaticPaths() {
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const title = `${post.title} | Continuous Software Generation`;
+const description = post.desc;
+---
+
+<ManifestLayout 
+  title={title} 
+  description={description} 
+  showSidebar={false}
+  ogImage={post.image || "/images/interfaces_agents.png"}
+  ogType="article"
+  publishDate={post.date}
+  category={post.category}
+>
+  <article class="post-article">
+    <!-- Back Navigation -->
+    <header class="article-header">
+      <a href="/now/" class="back-to-now-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Back to Now</span>
+      </a>
+      
+      <div class="article-meta-row">
+        <span class="category-badge-tag">{post.category}</span>
+        <span class="article-date">{post.date}</span>
+      </div>
+
+      <h1 class="article-title">{post.title}</h1>
+      
+      <div class="author-row">
+        <a href="https://x.com/carlos_gif" class="avatar-link" target="_blank" rel="noopener noreferrer" title="Carlos Rivera on X">
+          <img class="author-avatar" src="https://www.gravatar.com/avatar/a1bafce77f2cf59e7d7454fb7305474b?s=120" alt="Carlos Rivera" />
+        </a>
+        <div class="author-details-box">
+          <span class="author-label">Published by</span>
+          <a href="https://x.com/carlos_gif" class="author-name-link" target="_blank" rel="noopener noreferrer">
+            <strong>{post.author}</strong>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Full Content -->
+    <div class="article-body prose" set:html={post.fullContent}></div>
+  </article>
+</ManifestLayout>
+
+<style>
+  .post-article {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 16px 0 120px;
+  }
+
+  .article-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 40px;
+    margin-bottom: 48px;
+  }
+
+  .back-to-now-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    transition: color 0.15s ease;
+    margin-bottom: 48px;
+  }
+
+  .back-to-now-btn:hover {
+    color: var(--text);
+  }
+
+  .back-to-now-btn svg {
+    transition: transform 0.2s ease;
+  }
+
+  .back-to-now-btn:hover svg {
+    transform: translateX(-4px);
+  }
+
+  .article-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .category-badge-tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 4px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .article-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dim);
+  }
+
+  .article-title {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 28px;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+  }
+
+  .author-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    filter: grayscale(100%);
+    transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--line-strong);
+    display: block;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .author-row:hover .author-avatar,
+  .author-avatar:hover {
+    filter: grayscale(0%);
+  }
+
+  .author-details-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .author-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dim);
+    line-height: 1;
+  }
+
+  .author-name-link {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.2;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .author-name-link:hover {
+    color: #77b7ff;
+  }
+
+  /* Rich Article prose typography */
+  .article-body {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  .article-body :global(p) {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .article-body :global(.post-lede) {
+    font-size: 21px;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 32px;
+  }
+
+  .article-body :global(ul) {
+    margin-bottom: 28px;
+    padding-left: 20px;
+    color: var(--muted);
+  }
+
+  .article-body :global(li) {
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+
+  .article-body :global(blockquote) {
+    margin: 40px 0;
+    padding: 0 0 0 24px;
+    border-left: 2px solid var(--line-strong);
+  }
+
+  .article-body :global(blockquote p) {
+    font-size: 19px;
+    color: var(--text);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  /* Custom block formatting */
+  .article-body :global(.pipeline-flow-chart) {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    padding: 20px;
+    line-height: 1.6;
+    color: var(--accent);
+    word-break: break-word;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .article-body :global(.comp-box) {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .article-body :global(.comp-box.hl) {
+    border-color: rgba(120, 119, 198, 0.3);
+    background: linear-gradient(180deg, rgba(120, 119, 198, 0.05) 0%, transparent 100%);
+  }
+
+  .article-body :global(.comp-box .lbl) {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .article-body :global(.comp-box p) {
+    font-size: 15.5px;
+    margin: 0;
+    color: var(--text);
+  }
+</style>

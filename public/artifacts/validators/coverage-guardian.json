@@ -1,0 +1,62 @@
+{
+  "kind": "csg.validator",
+  "name": "coverage-guardian",
+  "version": "0.2.0",
+  "intent": "Prevent autonomous changes from reducing test coverage on mutated production source files or moving behavior into untested paths.",
+  "riskLevel": "medium",
+  "allowedScope": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "apps/*/src/**/*.ts",
+    "apps/*/src/**/*.tsx",
+    "tests/**",
+    "apps/*/tests/**"
+  ],
+  "blockedScope": [
+    "coverage/**",
+    "dist/**",
+    "build/**",
+    "generated/**"
+  ],
+  "commands": [
+    {
+      "name": "coverage",
+      "command": "bun run test:coverage",
+      "required": true,
+      "timeoutMs": 180000
+    }
+  ],
+  "thresholds": {
+    "global": {
+      "lines": 85,
+      "branches": 80,
+      "functions": 85,
+      "statements": 85
+    },
+    "changedFiles": {
+      "lines": 90,
+      "branches": 85
+    }
+  },
+  "failWhen": [
+    "coverage command fails",
+    "changed production file has no associated test or contract evidence",
+    "global coverage decreases from base branch",
+    "branch coverage decreases in billing, auth, permissions, or data deletion code"
+  ],
+  "evidence": [
+    "changed_files",
+    "coverage_summary",
+    "changed_file_coverage",
+    "test_results",
+    "policy_decisions"
+  ],
+  "escalation": {
+    "when": [
+      "coverage cannot run",
+      "changed production source lacks coverage",
+      "coverage threshold must be lowered to pass"
+    ],
+    "to": "test owner"
+  }
+}

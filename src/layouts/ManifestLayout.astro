@@ -1,0 +1,264 @@
+---
+import ChapterNav from '../components/ChapterNav.astro';
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  showSidebar?: boolean;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  publishDate?: string;
+  category?: string;
+}
+
+const { 
+  title, 
+  description, 
+  showSidebar = true,
+  ogImage = "/images/interfaces_agents.png",
+  ogType = "website",
+  publishDate,
+  category
+} = Astro.props;
+
+// Compute absolute URL for OG image using Astro config base or default
+const siteUrl = Astro.site || "https://governed.run";
+const resolvedOgImage = new URL(ogImage, siteUrl).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#000000" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content={resolvedOgImage} />
+    {ogType === 'article' && (
+      <>
+        {publishDate && <meta property="article:published_time" content={new Date(publishDate).toISOString()} />}
+        <meta property="article:author" content="Carlos Rivera" />
+        {category && <meta property="article:section" content={category} />}
+      </>
+    )}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    <meta name="twitter:site" content="@carlos_gif" />
+    <meta name="twitter:creator" content="@carlos_gif" />
+
+    <link rel="canonical" href={Astro.url} />
+    <link rel="alternate" type="application/rss+xml" title="Continuous Software Generation | Now" href="/rss/now.xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="top-nav" aria-label="Primary navigation">
+        <a href="/" class="top-brand">
+          Continuous Software Generation
+        </a>
+        <div class="top-links">
+          <a href="/now/">Now</a>
+          <a href="/hub/">Skills</a>
+          <a href="/#definition">Thesis</a>
+        </div>
+      </nav>
+    </header>
+
+    <div class={`layout-container ${showSidebar ? "" : "no-sidebar"}`}>
+      {showSidebar && (
+        <aside class="layout-sidebar">
+          <ChapterNav />
+        </aside>
+      )}
+      <main class="layout-content">
+        <slot />
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-statement">
+          <a href="/" class="footer-brand">Continuous Software Generation</a>
+          <p>Portable primitives for bounded, observable, reviewable autonomous software work.</p>
+        </div>
+        <div class="footer-links" aria-label="Artifact links">
+          <a href="/now/">Now</a>
+          <a href="/hub/">Skills Directory</a>
+          <a href="/artifacts/system-prompts/AGENTS.md">AGENTS.md</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.86);
+    backdrop-filter: blur(16px);
+  }
+
+  .top-nav {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 1320px;
+    margin: 0 auto;
+    min-height: 64px;
+    padding: 0 24px;
+  }
+
+  .top-brand,
+  .footer-brand {
+    align-items: center;
+    color: var(--text);
+    display: inline-flex;
+    font-size: 15px;
+    font-weight: 600;
+    gap: 10px;
+    letter-spacing: 0;
+  }
+
+
+  .top-links,
+  .footer-links {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .top-links a,
+  .footer-links a {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1;
+    padding: 9px 10px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .top-links a:hover,
+  .footer-links a:hover {
+    border-color: var(--line-strong);
+    color: var(--text);
+  }
+
+  .layout-container {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .layout-sidebar {
+    flex: 0 0 240px;
+    padding: 64px 32px 64px 0;
+    display: none;
+  }
+
+  .layout-content {
+    flex: 1;
+    min-width: 0;
+    padding: 64px 0 120px;
+    max-width: 960px;
+  }
+
+  .layout-container.no-sidebar {
+    display: block;
+  }
+
+  .layout-container.no-sidebar .layout-content {
+    max-width: 1140px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 64px 0 120px;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--line);
+  }
+
+  .footer-inner {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 40px 24px 56px;
+  }
+
+  .footer-statement {
+    max-width: 440px;
+  }
+
+  .footer-statement p {
+    color: var(--dim);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 10px 0 0;
+  }
+
+  @media (min-width: 768px) {
+    .layout-sidebar {
+      display: block;
+    }
+    .layout-content {
+      padding: 120px 0 160px 64px;
+    }
+
+    .layout-container.no-sidebar .layout-content {
+      padding: 96px 0 160px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .layout-content {
+      padding: 160px 0 200px 120px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .top-nav,
+    .footer-inner {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 16px;
+      padding-top: 16px;
+    }
+
+    .top-links,
+    .footer-links {
+      width: 100%;
+    }
+
+    .footer-inner {
+      padding-bottom: 40px;
+    }
+  }
+</style>

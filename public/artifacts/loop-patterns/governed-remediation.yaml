@@ -1,0 +1,88 @@
+kind: csg.loop-pattern
+name: governed-remediation
+version: 0.2.0
+intent: Repair a concrete failure through a bounded inspect, patch, validate, and escalate loop without mutating protected production surfaces.
+riskLevel: high
+
+allowedScope:
+  - failing tests and adjacent fixtures
+  - source files directly implicated by the failure
+  - documentation or runbooks that caused operational misuse
+
+blockedScope:
+  - secrets and credentials
+  - production infrastructure
+  - destructive database migrations
+  - validator weakening
+  - unrelated refactors
+
+loop:
+  maxAttempts: 2
+  phases:
+    - name: intent
+      requiredEvidence:
+        - failure statement
+        - allowed scope
+        - blocked scope
+
+    - name: plan
+      requiredEvidence:
+        - files to inspect
+        - validators to run
+        - escalation rule
+
+    - name: policy
+      requiredEvidence:
+        - protected path check
+        - operation check
+        - budget check when inference or runner limits apply
+
+    - name: execute
+      requiredEvidence:
+        - changed files
+        - reason each file changed
+
+    - name: validate
+      requiredEvidence:
+        - exact commands
+        - pass or fail status
+        - relevant output summary
+
+    - name: adapt
+      enterWhen:
+        - validation failed
+        - failure output identifies a bounded next patch
+      requiredEvidence:
+        - why previous attempt failed
+        - why next attempt remains inside scope
+
+    - name: escalate
+      enterWhen:
+        - attempts exceeded
+        - blocked scope required
+        - secret or customer data exposed
+        - validator cannot run for production critical surface
+        - public contract change lacks tests
+
+validation:
+  required:
+    - targeted failing validator
+    - broader validator for touched surface
+  failBehavior: adapt_once_then_escalate
+
+observability:
+  emit:
+    - intent
+    - changed_files
+    - policy_decisions
+    - validator_results
+    - attempt_count
+    - remaining_risk
+
+escalation:
+  to: human reviewer
+  include:
+    - failure evidence
+    - attempted patches
+    - validators run
+    - blocked requirement

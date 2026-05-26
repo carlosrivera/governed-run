@@ -1,0 +1,10 @@
+{
+  "name": "governed.run",
+  "short_name": "governed.run",
+  "description": "Continuous Software Generation manifesto and governed operational artifact registry.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "background_color": "#000000",
+  "theme_color": "#000000"
+}

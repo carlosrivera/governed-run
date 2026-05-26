@@ -1,0 +1,62 @@
+{
+  "kind": "csg.validator",
+  "name": "billing-contract",
+  "version": "0.2.0",
+  "intent": "Prove that autonomous changes did not alter billing totals, invoice state transitions, idempotency guarantees, or payment provider side effects without explicit contract updates.",
+  "riskLevel": "high",
+  "allowedScope": [
+    "tests/billing/**",
+    "fixtures/billing/**",
+    "docs/billing/**",
+    "apps/*/src/billing/**"
+  ],
+  "blockedScope": [
+    "apps/*/src/billing/runtime/secrets/**",
+    "apps/*/src/billing/providers/production/**",
+    "infra/production/**",
+    ".env*"
+  ],
+  "commands": [
+    {
+      "name": "billing unit tests",
+      "command": "bun test tests/billing",
+      "required": true,
+      "timeoutMs": 120000
+    },
+    {
+      "name": "billing contract tests",
+      "command": "bun run contracts:billing",
+      "required": true,
+      "timeoutMs": 180000
+    },
+    {
+      "name": "idempotency regression",
+      "command": "bun test tests/billing/idempotency.test.ts",
+      "required": true,
+      "timeoutMs": 120000
+    }
+  ],
+  "invariants": [
+    "invoice totals must be deterministic for identical inputs",
+    "payment capture must remain idempotent by provider event id",
+    "refund calculations must not exceed captured amount",
+    "currency rounding must use integer minor units",
+    "provider secrets must never appear in logs, traces, fixtures, or snapshots"
+  ],
+  "evidence": [
+    "changed_files",
+    "policy_decisions",
+    "validator_results",
+    "contract_output",
+    "remaining_risk"
+  ],
+  "escalation": {
+    "when": [
+      "billing runtime behavior changes without updated contract tests",
+      "provider integration code changes without a sandbox provider test",
+      "any command cannot run",
+      "a secret or live provider identifier appears in output"
+    ],
+    "to": "billing owner"
+  }
+}

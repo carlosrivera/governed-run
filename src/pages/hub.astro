@@ -1,0 +1,471 @@
+---
+import ManifestLayout from '../layouts/ManifestLayout.astro';
+import { artifactCatalog } from '../data/artifacts';
+
+const title = "Primitives Directory | Continuous Software Generation";
+const description = "Browse production-ready Continuous Software Generation primitives: policies, hooks, skills, loop patterns, validators, and agent operating contracts.";
+---
+
+<ManifestLayout title={title} description={description} showSidebar={false}>
+  <section class="directory-section" id="directory">
+    <div class="directory-header">
+      <span class="chapter-kicker">Production Control Surface</span>
+      <h1>Operational Primitives Directory</h1>
+      <p class="directory-lede">
+        A concrete set of agent operating contracts, production policies, command gates, validators, loop patterns, and skills that can be copied into a real repository and used to bound autonomous work before it touches production surfaces.
+      </p>
+      <div class="directory-actions">
+        <a class="directory-button primary" href="/artifacts/schema/csg-artifact.schema.json">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          Artifact schema
+        </a>
+        <a class="directory-button" href="/artifacts/submission-template.json">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Submission template
+        </a>
+        <a class="directory-button" href="/#definition">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          Read thesis
+        </a>
+      </div>
+    </div>
+
+    <!-- Search bar -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="primitives-search" type="text" placeholder="Search primitives by name, kind, description, or tags..." />
+      </div>
+    </div>
+
+    <!-- Primitives unified row list -->
+    <div class="primitives-board">
+      <div class="primitives-table">
+        <div class="table-header">
+          <div class="col-primitive">Primitive</div>
+          <div class="col-description">Description</div>
+          <div class="col-tags">Tags</div>
+          <div class="col-actions text-right">Actions</div>
+        </div>
+
+        <div class="table-body" id="primitives-list">
+          {artifactCatalog.map((artifact) => (
+            <div class="table-row" data-primitive-row data-search={`${artifact.title} ${artifact.kind} ${artifact.body} ${artifact.tags.join(" ")}`}>
+              
+              <div class="col-primitive">
+                <div class="primitive-title-row">
+                  <span class={`kind-badge kind-${artifact.kind.toLowerCase().replace(" ", "-")}`}>{artifact.kind}</span>
+                  <a class="primitive-name" href={artifact.href} target="_blank" rel="noopener noreferrer">{artifact.title}</a>
+                </div>
+                <span class="primitive-path">{artifact.href.startsWith("/") ? "public" + artifact.href : artifact.href}</span>
+              </div>
+
+              <div class="col-description">
+                <p class="desc-text">{artifact.body}</p>
+              </div>
+
+              <div class="col-tags">
+                <div class="tag-row">
+                  {artifact.tags.map((tag) => (
+                    <span class="tag">#{tag}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div class="col-actions">
+                <a class="row-action-btn view-btn" href={artifact.href} target="_blank" rel="noopener noreferrer" title="View Source">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  <span>View</span>
+                </a>
+                <button class="row-action-btn copy-path-btn" data-copy-path={artifact.href} title="Copy relative path to clipboard">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="copy-svg"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="check-svg is-hidden"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Copy Path</span>
+                </button>
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+      <p class="catalog-empty is-hidden" id="catalog-empty">No operational primitives match your search query.</p>
+    </div>
+  </section>
+</ManifestLayout>
+
+<style>
+  .directory-section {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 16px 0 100px;
+  }
+
+  .directory-header {
+    max-width: 100%;
+    margin-bottom: 48px;
+  }
+
+  .directory-lede {
+    color: var(--muted);
+    font-size: 19px;
+    line-height: 1.55;
+    margin-top: 20px;
+    max-width: 720px;
+  }
+
+  .directory-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .directory-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1;
+    padding: 12px 16px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .directory-button:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+  }
+
+  .directory-button.primary {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  .directory-button.primary:hover {
+    background: #e2e2e2;
+    border-color: #e2e2e2;
+  }
+
+  /* Search Container */
+  .search-container {
+    margin-bottom: 32px;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.2s ease;
+  }
+
+  .search-input-wrapper:focus-within {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+  }
+
+  .search-input-wrapper input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--text);
+    padding: 14px 0 14px 28px;
+  }
+
+  .search-input-wrapper input::placeholder {
+    color: var(--dim);
+  }
+
+  /* Primitives Table */
+  .primitives-board {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    background: #050505;
+    padding: 12px 24px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .primitives-table {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 220px 1fr 130px 180px;
+    gap: 16px;
+    padding: 16px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dim);
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 130px 180px;
+    gap: 16px;
+    padding: 20px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all 0.15s ease;
+  }
+
+  .table-row:last-child {
+    border-bottom: none;
+  }
+
+  .table-row:hover {
+    background: rgba(255, 255, 255, 0.01);
+  }
+
+  .col-primitive {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .primitive-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .kind-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 3px 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Colors matching the aesthetic */
+  .kind-hook { background: rgba(120, 119, 198, 0.1); color: #b1adff; border: 1px solid rgba(120, 119, 198, 0.2); }
+  .kind-skill { background: rgba(56, 189, 248, 0.1); color: #7ad3ff; border: 1px solid rgba(56, 189, 248, 0.2); }
+  .kind-system-prompt { background: rgba(244, 63, 94, 0.1); color: #ff6881; border: 1px solid rgba(244, 63, 94, 0.2); }
+  .kind-policy { background: rgba(234, 179, 8, 0.08); color: #f2c73f; border: 1px solid rgba(234, 179, 8, 0.18); }
+  .kind-validator { background: rgba(34, 197, 94, 0.08); color: #51dc7b; border: 1px solid rgba(34, 197, 94, 0.18); }
+  .kind-loop-pattern { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.2); }
+  .kind-schema { background: rgba(249, 115, 22, 0.08); color: #ff914d; border: 1px solid rgba(249, 115, 22, 0.18); }
+  .kind-template { background: rgba(100, 116, 139, 0.1); color: #cbd5e1; border: 1px solid rgba(100, 116, 139, 0.18); }
+
+  .primitive-name {
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .primitive-name:hover {
+    color: #77b7ff;
+  }
+
+  .primitive-path {
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    word-break: break-all;
+  }
+
+  .col-description {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .desc-text {
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .col-tags {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .col-actions {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .row-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    padding: 8px 10px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .row-action-btn svg {
+    flex-shrink: 0;
+  }
+
+  .row-action-btn:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+  }
+
+  .copy-path-btn {
+    border-color: transparent;
+  }
+
+  .copy-path-btn.is-success {
+    background: rgba(34, 197, 94, 0.08);
+    border-color: rgba(34, 197, 94, 0.25);
+    color: #4ade80;
+  }
+
+  .text-right {
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+  .is-hidden {
+    display: none !important;
+  }
+
+  .catalog-empty {
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    padding: 40px 0;
+    text-align: center;
+  }
+
+  /* Responsive Collapsing Layout */
+  @media (max-width: 768px) {
+    .table-header {
+      display: none;
+    }
+    .table-row {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "primitive"
+        "description"
+        "tags"
+        "actions";
+      gap: 12px;
+      padding: 24px 8px;
+    }
+    .col-primitive {
+      grid-area: primitive;
+    }
+    .col-description {
+      grid-area: description;
+    }
+    .col-tags {
+      grid-area: tags;
+    }
+    .col-actions {
+      grid-area: actions;
+      justify-content: flex-start;
+      margin-top: 4px;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Simple search filtering
+  const searchInput = document.getElementById("primitives-search");
+  const rows = Array.from(document.querySelectorAll("[data-primitive-row]"));
+  const emptyMessage = document.getElementById("catalog-empty");
+
+  searchInput?.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    rows.forEach((row) => {
+      const text = row.getAttribute("data-search")?.toLowerCase() ?? "";
+      const matches = query.length === 0 || text.includes(query);
+      row.classList.toggle("is-hidden", !matches);
+      if (matches) visibleCount += 1;
+    });
+
+    emptyMessage?.classList.toggle("is-hidden", visibleCount > 0);
+  });
+
+  // Row "Copy Path" button actions
+  document.querySelectorAll(".copy-path-btn").forEach((button) => {
+    button.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const rawHref = button.getAttribute("data-copy-path");
+      if (!rawHref) return;
+
+      // Translate public paths to relative repository locations
+      let relativePath = rawHref.startsWith("/") ? rawHref.slice(1) : rawHref;
+      if (relativePath.startsWith("artifacts/")) {
+        relativePath = "public/" + relativePath;
+      }
+
+      try {
+        await navigator.clipboard.writeText(relativePath);
+        button.classList.add("is-success");
+
+        const textSpan = button.querySelector("span");
+        const copySvg = button.querySelector(".copy-svg");
+        const checkSvg = button.querySelector(".check-svg");
+
+        if (textSpan) textSpan.textContent = "Copied!";
+        copySvg?.classList.add("is-hidden");
+        checkSvg?.classList.remove("is-hidden");
+
+        setTimeout(() => {
+          button.classList.remove("is-success");
+          if (textSpan) textSpan.textContent = "Copy Path";
+          copySvg?.classList.remove("is-hidden");
+          checkSvg?.classList.add("is-hidden");
+        }, 2000);
+      } catch (err) {
+        console.error("Failed to copy file path: ", err);
+      }
+    });
+  });
+</script>

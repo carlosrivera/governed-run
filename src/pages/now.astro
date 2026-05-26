@@ -1,0 +1,546 @@
+---
+import ManifestLayout from '../layouts/ManifestLayout.astro';
+import { posts } from '../data/posts';
+
+const title = "Now | Continuous Software Generation";
+const description = "Company updates, thoughts on continuous software work, and reflections on building governed operational systems.";
+
+// Split the posts: first 6 are displayed as visual cards, the rest are in the Archive
+const featuredPosts = posts.slice(0, 6);
+const archivePosts = posts.slice(6);
+---
+
+<ManifestLayout title={title} description={description} showSidebar={false}>
+  <section class="now-section">
+    <!-- Header Area -->
+    <div class="now-header">
+      <span class="chapter-kicker">Updates from the team</span>
+      <h1>Now</h1>
+      
+      <!-- Category/Filter Tabs -->
+      <div class="tabs-row">
+        <div class="tabs-container">
+          <button class="tab-item is-active" data-category="all">All</button>
+          <button class="tab-item" data-category="AI">AI</button>
+          <button class="tab-item" data-category="Economics">Economics</button>
+          <button class="tab-item" data-category="Core">Core</button>
+          <button class="tab-item" data-category="Engineering">Engineering</button>
+          <button class="tab-item" data-category="Design">Design</button>
+          <button class="tab-item" data-category="Practices">Practices</button>
+        </div>
+        <div class="rss-link">
+          <a href="/rss/now.xml" title="RSS Feed">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+            <span>RSS</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Grid Cards Section -->
+    <div class="cards-grid">
+      {featuredPosts.map((card) => (
+        <a class="now-card" href={`/now/${card.id}/`} data-category={card.category}>
+          <div class="card-visual">
+            {card.image && (
+              <img src={card.image} alt="" class="card-img" loading="lazy" />
+            )}
+            <div class="visual-gradient-overlay" style={{ background: card.gradient }}></div>
+            <div class="visual-glow"></div>
+            <span class="category-badge">{card.category}</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{card.title}</h3>
+            <p class="card-desc">{card.desc}</p>
+            <div class="card-footer">
+              <span class="meta-text">{card.date}</span>
+              <span class="arrow-icon">&rarr;</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Archive Timeline Section -->
+    <div class="section-divider">
+      <h2>Archive</h2>
+    </div>
+
+    <!-- Archive Chronological Feed -->
+    <div class="timeline-feed">
+      <div class="feed-line"></div>
+      
+      {archivePosts.map((item, index) => (
+        <a class="timeline-row now-archive-link" href={`/now/${item.id}/`} data-category={item.category}>
+          <div class="row-indicator">
+            <div class="indicator-dot" data-first={index === 0}></div>
+          </div>
+          <div class="row-meta">
+            <span class="row-date">{item.date}</span>
+          </div>
+          <div class="row-content">
+            <h4 class="row-title">{item.title}</h4>
+            <p class="row-desc">{item.desc}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <!-- Client-side Interactive Filter Script -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab-item');
+        const cards = document.querySelectorAll('.now-card');
+        const rows = document.querySelectorAll('.timeline-row');
+
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('is-active'));
+            tab.classList.add('is-active');
+
+            const selectedCat = tab.getAttribute('data-category');
+
+            // Filter Featured Grid Cards
+            cards.forEach(card => {
+              const cardCat = card.getAttribute('data-category');
+              if (selectedCat === 'all' || selectedCat === cardCat) {
+                card.style.display = 'flex';
+              } else {
+                card.style.display = 'none';
+              }
+            });
+
+            // Filter Archive Timeline Feed Rows
+            let firstVisibleFound = false;
+            rows.forEach(row => {
+              const rowCat = row.getAttribute('data-category');
+              const dot = row.querySelector('.indicator-dot');
+              
+              if (selectedCat === 'all' || selectedCat === rowCat) {
+                row.style.display = '';
+                
+                if (!firstVisibleFound) {
+                  dot.setAttribute('data-first', 'true');
+                  firstVisibleFound = true;
+                } else {
+                  dot.setAttribute('data-first', 'false');
+                }
+              } else {
+                row.style.display = 'none';
+              }
+            });
+          });
+        });
+      });
+    </script>
+    
+    <div class="view-all-wrapper">
+      <a class="view-all-link" href="/hub/">
+        <span>View all primitives</span>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </section>
+</ManifestLayout>
+
+<style>
+  .now-section {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 16px 0 120px;
+  }
+
+  .now-header {
+    margin-bottom: 56px;
+  }
+
+  .now-header h1 {
+    font-size: 56px;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+
+  /* Linear.app Tabs styling */
+  .tabs-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+    margin-bottom: 32px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tabs-container {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+
+  .tabs-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-item {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--dim);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+  }
+
+  .tab-item:hover {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .tab-item.is-active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.04);
+    box-shadow: 
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .rss-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    transition: all 0.15s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+
+  .rss-link a:hover {
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  /* Premium Cards Grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 32px;
+    margin-top: 40px;
+    margin-bottom: 96px;
+  }
+
+  .now-card {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Image header / Gradient visual */
+  .card-visual {
+    height: 180px;
+    width: 100%;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border: none; 
+    background: #000000; /* pitch black container background */
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* covers the rectangular space */
+    display: block;
+    mix-blend-mode: screen; /* screens away any off-black backgrounds or borders completely */
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .visual-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    mix-blend-mode: normal;
+    opacity: 0.35; /* subtle, high-end mesh gradient overlay */
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .visual-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 80%);
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  .category-badge {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .card-title {
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 10px;
+    text-wrap: pretty;
+    transition: color 0.15s ease;
+  }
+
+  .card-desc {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  .meta-text {
+    font-size: 12px;
+    color: var(--dim);
+  }
+
+  .meta-dot {
+    margin: 0 4px;
+  }
+
+  .arrow-icon {
+    font-size: 14px;
+    color: var(--dim);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s ease;
+  }
+
+  /* Premium Hover Interactions */
+  .now-card:hover .card-visual {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .now-card:hover .card-img {
+    transform: scale(1.04);
+  }
+
+  .now-card:hover .visual-gradient-overlay {
+    opacity: 0.25; /* reveals detail on hover */
+  }
+
+  .now-card:hover .card-title {
+    color: #77b7ff;
+  }
+
+  .now-card:hover .arrow-icon {
+    transform: translateX(4px);
+    color: var(--text);
+  }
+
+  /* Archive Timeline styles */
+  .section-divider {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 16px;
+    margin-bottom: 40px;
+  }
+
+  .section-divider h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .timeline-feed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-bottom: 64px;
+  }
+
+  .feed-line {
+    position: absolute;
+    left: 4px;
+    top: 12px;
+    bottom: 12px;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .timeline-row {
+    position: relative;
+    padding-left: 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .now-archive-link {
+    display: grid;
+    transition: all 0.2s ease;
+  }
+
+  .now-archive-link:hover .row-title {
+    color: #77b7ff;
+  }
+
+  .now-archive-link:hover .indicator-dot {
+    border-color: var(--text);
+    background: var(--text);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  }
+
+  .row-indicator {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 9px;
+    height: 9px;
+  }
+
+  .indicator-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--dim);
+    transition: all 0.2s ease;
+  }
+
+  .indicator-dot[data-first="true"] {
+    background: var(--text);
+    border-color: var(--text);
+  }
+
+  .row-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--dim);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .row-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .row-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.45;
+    transition: color 0.15s ease;
+  }
+
+  .row-desc {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .view-all-wrapper {
+    display: flex;
+    margin-top: 48px;
+  }
+
+  .view-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dim);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    transition: color 0.15s ease;
+  }
+
+  .view-all-link:hover {
+    color: var(--text);
+  }
+
+  .view-all-link .arrow {
+    transition: transform 0.2s ease;
+  }
+
+  .view-all-link:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  @media (min-width: 768px) {
+    .timeline-row {
+      grid-template-columns: 140px 1fr;
+      gap: 32px;
+      padding-left: 36px;
+    }
+
+    .feed-line {
+      left: 12px;
+    }
+
+    .row-indicator {
+      left: 8px;
+    }
+
+    .row-meta {
+      padding-top: 2px;
+    }
+  }
+</style>

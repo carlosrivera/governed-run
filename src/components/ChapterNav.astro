@@ -1,0 +1,129 @@
+---
+const chapters = [
+  { id: "definition", title: "The Operational Shift", number: "01" },
+  { id: "economics", title: "The Economic Inevitability", number: "02" },
+  { id: "realism", title: "Operational Realism", number: "03" },
+  { id: "convergence", title: "Ecosystem Convergence", number: "04" },
+  { id: "maturity", title: "AI Maturity Is Operational", number: "05" },
+  { id: "loop", title: "The Governed Core Loop", number: "06" },
+  { id: "governance", title: "Governance Is Infrastructure", number: "07" },
+  { id: "primitives", title: "Grounding Portable Primitives", number: "08" },
+  { id: "agnostic", title: "Portability Over Model Loyalty", number: "09" },
+  { id: "boundaries", title: "What CSG Is Not", number: "10" },
+  { id: "future", title: "The Long-Term Shift", number: "11" },
+];
+---
+
+<nav class="chapter-nav" aria-label="Table of Contents">
+  <div class="nav-header">
+    <span class="nav-subtitle">Manifesto</span>
+  </div>
+  
+  <ol class="chapter-list">
+    {chapters.map((chapter) => (
+      <li>
+        <a href={`#${chapter.id}`} class="chapter-link">
+          <span class="chapter-number">{chapter.number}</span>
+          <span class="chapter-title">{chapter.title}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .chapter-nav {
+    position: sticky;
+    top: 94px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .nav-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .brand {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0;
+  }
+
+  .nav-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .chapter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-left: 1px solid var(--line);
+  }
+
+  .chapter-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-left: 16px;
+    color: var(--dim);
+    font-size: 13px;
+    line-height: 1.35;
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  .chapter-link:hover,
+  .chapter-link.is-active {
+    color: var(--text);
+  }
+
+  .chapter-link.is-active::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--text);
+  }
+
+  .chapter-number {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dim);
+    line-height: 1.35;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          document.querySelectorAll('.chapter-link').forEach(link => {
+            link.classList.remove('is-active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('is-active');
+            }
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -80% 0px' });
+
+    document.querySelectorAll('section[id]').forEach(section => {
+      observer.observe(section);
+    });
+  });
+</script>

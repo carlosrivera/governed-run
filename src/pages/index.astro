@@ -1,0 +1,822 @@
+---
+import ManifestLayout from '../layouts/ManifestLayout.astro';
+
+const title = "Continuous Software Generation Manifesto";
+const description = "Continuous Software Generation is the evolution of the software development lifecycle into governed autonomous operational loops.";
+
+const primitives = [
+  {
+    title: "Skills",
+    body: "Portable capabilities for review, remediation, migration, refactoring, and validation.",
+    code: `name: secure_database_migration
+description: Safely run schema migrations.
+required_validators:
+  - dry_run_check
+  - zero_downtime_verify`,
+  },
+  {
+    title: "Hooks",
+    body: "Lifecycle interception points before planning, execution, validation, and remediation.",
+    code: `export async function beforeExecute(plan) {
+  await auditLog.record(plan.intent);
+  await policyEngine.assert(plan.mutations);
+}`,
+  },
+  {
+    title: "Policies",
+    body: "Explicit operational constraints around paths, secrets, deployments, budgets, and access.",
+    code: `policy:
+  deny_paths:
+    - src/secrets/*
+    - infra/production/*
+  require_validation: true`,
+  },
+  {
+    title: "Validators",
+    body: "Executable contracts that determine whether output is correct and safe.",
+    code: `{
+  "type": "test_suite",
+  "command": "npm run test:billing",
+  "timeout_ms": 30000
+}`,
+  },
+  {
+    title: "Observability Adapters",
+    body: "Telemetry surfaces for traces, cost, audit logs, failure tracking, and execution metrics.",
+    code: `trace:
+  run_id: csg-2026-05-25
+  model_cost_usd: 1.42
+  mutations: 3
+  validators_passed: 8`,
+  },
+  {
+    title: "Loop Patterns",
+    body: "Reusable autonomous flows for remediation, validation, dependency updates, and review.",
+    code: `loop:
+  intent: remediate failing test
+  steps:
+    - inspect
+    - patch
+    - validate
+    - report`,
+  }
+];
+
+const loopSteps = [
+  {
+    title: "Intent",
+    body: "Humans define goals, constraints, acceptable risk, policies, and operational boundaries.",
+  },
+  {
+    title: "Plan",
+    body: "Autonomous systems synthesize task graphs, implementation paths, dependencies, and sequencing.",
+  },
+  {
+    title: "Execute",
+    body: "Agents modify code, run tools, generate patches, refactor systems, and operate infrastructure inside explicit limits.",
+  },
+  {
+    title: "Validate",
+    body: "Tests, diff analysis, security checks, policy gates, regression analysis, and operational review prove the work.",
+  },
+  {
+    title: "Adapt",
+    body: "Failures, telemetry, review outcomes, and remediation attempts feed back into prompts, validators, policies, and heuristics.",
+  },
+];
+
+const governanceControls = [
+  "Protected directories",
+  "Secret access boundaries",
+  "Deployment restrictions",
+  "Sandbox execution",
+  "Validation requirements",
+  "Execution budgets",
+  "Audit logging",
+  "Human escalation boundaries",
+  "Rollback policies",
+];
+
+const nonGoals = [
+  "another agent framework",
+  "an orchestration runtime",
+  "a replacement for developers",
+  "AGI infrastructure",
+  "prompt engineering theater",
+  "autonomous coding hype",
+  "a vendor-specific workflow",
+  "infinite agent chains",
+];
+
+const maturityComparison = [
+  {
+    title: "Traditional Company",
+    items: [
+      "Humans produce software manually",
+      "AI is optional tooling",
+      "Static workflows",
+      "Human-centric interfaces",
+      "Governance after execution",
+    ],
+  },
+  {
+    title: "AI-Enabled Company",
+    items: [
+      "Humans use AI assistance",
+      "AI improves productivity",
+      "Accelerated workflows",
+      "Human-first systems with AI features",
+      "Governance around workflows",
+    ],
+  },
+  {
+    title: "AI-Native Company",
+    items: [
+      "Autonomous systems participate directly",
+      "Systems assume agents exist",
+      "Adaptive operational loops",
+      "Agent-consumable infrastructure",
+      "Governance embedded into execution",
+    ],
+  },
+];
+
+const maturityLevels = [
+  {
+    level: "Level 0",
+    title: "Manual SDLC",
+    body: "A traditional engineering organization where humans manually implement, review, deploy, and operate most software changes.",
+    signals: ["tickets drive execution", "static CI/CD", "human-only code review", "manual deployments"],
+  },
+  {
+    level: "Level 1",
+    title: "AI-Assisted Development",
+    body: "AI acts as individual productivity tooling through autocomplete, code generation, debugging help, and documentation drafts.",
+    signals: ["voluntary AI usage", "ad hoc prompts", "no shared standards", "human-supervised at every step"],
+  },
+  {
+    level: "Level 2",
+    title: "AI-Augmented SDLC",
+    body: "AI begins participating inside engineering workflows through generated tests, PR review support, documentation updates, and remediation suggestions.",
+    signals: ["workflow hooks", "machine-readable tasks", "validators emerging", "operational APIs exposed"],
+  },
+  {
+    level: "Level 3",
+    title: "Governed Autonomous Workflows",
+    body: "Autonomous systems execute bounded operational tasks under policy, sandboxing, validation gates, observability, and audit trails.",
+    signals: ["policy-aware execution", "bounded refactors", "remediation loops", "validated dependency upgrades"],
+  },
+  {
+    level: "Level 4",
+    title: "AI-Native Operational Systems",
+    body: "The organization structurally assumes agents exist, and software systems expose operational interfaces that autonomous systems can safely consume.",
+    signals: ["programmable policies", "reusable validators", "continuous loops", "observability-fed adaptation"],
+  },
+  {
+    level: "Level 5",
+    title: "Continuous Software Generation",
+    body: "The SDLC becomes a governed adaptive operational system where planning, execution, validation, remediation, and adaptation run continuously under constraints.",
+    signals: ["portable loop patterns", "runtime governance", "continuous remediation", "development and operations converge"],
+  },
+];
+
+const strategicAdvantages = [
+  "Faster operational adaptation",
+  "Lower coordination latency",
+  "Safer autonomous execution",
+  "Reusable governance primitives",
+  "Higher cognitive throughput",
+  "Continuous remediation capability",
+  "Composable operational intelligence",
+];
+
+---
+
+<ManifestLayout title={title} description={description}>
+
+  <section class="chapter-section" style="padding-top: 48px; border-bottom: none; margin-bottom: 64px;">
+    <h1>Code generation is commoditized.<br/>Governed operation is not.</h1>
+    <p class="lede">
+      Continuous Software Generation is the evolution of the software development lifecycle from a human centered production system into a governed operational system where autonomous software agents continuously participate under explicit constraints.
+    </p>
+    <p class="hero-note">
+      CSG is not about AI generating code. Code generation is the visible symptom of a deeper structural shift: software production is becoming partially autonomous, continuous, probabilistic, and operationally dynamic.
+    </p>
+
+    <div class="terminal-card" style="margin-top: 64px;">
+      <div class="terminal-header">
+        <span class="dot red"></span><span class="dot amber"></span><span class="dot green"></span>
+        <span class="title">csg.trace</span>
+      </div>
+      <div class="terminal-body">
+        <div class="trace-row"><span class="label">Intent</span><span class="value">Fix failing billing tests without touching production code.</span></div>
+        <div class="trace-row"><span class="label">Policy</span><span class="value">Production files are read only. Secrets are inaccessible. Deployment is blocked until tests pass.</span></div>
+        <div class="trace-row"><span class="label">Plan</span><span class="value">Inspect failing tests. Identify allowed files. Generate patch. Run tests. Report changes.</span></div>
+        <div class="trace-row"><span class="label">Validation</span><span class="value">Tests pass. Diff is limited to allowed paths. Audit log is generated.</span></div>
+        <div class="trace-row"><span class="label">Adapt</span><span class="value">Failure pattern is stored for future review heuristics.</span></div>
+        <div class="trace-row"><span class="label">Observe</span><span class="value">Cost, duration, tool calls, changed files, and validator results remain queryable after the run.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="definition">
+    <span class="chapter-kicker">01 &mdash; Definition</span>
+    <h2>The Operational Shift</h2>
+
+    <div class="prose">
+      <p>
+        Traditional software engineering assumed humans were the primary producers of software, automation supported them around the edges, changes happened in discrete release cycles, and operational control came from human review bandwidth. That model is breaking as autonomous systems begin participating directly in planning, implementation, validation, remediation, adaptation, and maintenance.
+      </p>
+      <p>
+        CSG assumes implementation becomes continuously synthesized and modified, operational loops become persistent rather than episodic, and governance, validation, observability, and adaptation become core infrastructure primitives. Engineering discipline moves upward in abstraction, from manually producing every artifact toward defining the constraints that allow autonomous work to proceed safely.
+      </p>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comparison-col">
+        <h3>Traditional optimization</h3>
+        <ul class="clean-list">
+          <li>Human coordination</li>
+          <li>Tickets</li>
+          <li>Pull requests</li>
+          <li>Meetings</li>
+          <li>Approval chains</li>
+          <li>Deployment cycles</li>
+        </ul>
+      </div>
+      <div class="comparison-col active">
+        <h3>CSG optimization</h3>
+        <ul class="clean-list">
+          <li>Autonomous execution loops</li>
+          <li>Runtime validation</li>
+          <li>Operational constraints</li>
+          <li>Policy enforcement</li>
+          <li>Observability</li>
+          <li>Continuous remediation</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="economics">
+    <span class="chapter-kicker">02 &mdash; The Pressure</span>
+    <h2>The Economic Inevitability</h2>
+    
+    <div class="prose">
+      <p>
+        Software production costs are collapsing and implementation speeds are exploding at a rate that shatters traditional human oversight. The bottleneck is no longer about whether we can build software, but whether we can safely operate continuously generated systems that outpace our capacity to comprehend them. Human review bandwidth becomes completely insufficient the moment code generation is scaled, creating a reality where operational complexity grows much faster than engineering teams can hire.
+      </p>
+      <p>
+        Code generation is rapidly commoditizing. Trust, validation, operational reliability, observability, safe execution, remediation, policy enforcement, system comprehension, accountability, and adaptation under constraints do not commoditize at the same rate. AI changes the unit economics of software production so aggressively that the software development lifecycle itself must evolve around autonomous operational systems.
+      </p>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="realism">
+    <span class="chapter-kicker">03 &mdash; Systems Failure</span>
+    <h2>Operational Realism</h2>
+    
+    <div class="prose">
+      <p>
+        Real autonomous software systems are messy, unpredictable, and inherently dangerous without strict operational boundaries. We are trying to stop autonomous software systems from becoming operational disasters, dealing directly with hallucinated refactors, context poisoning, flaky remediation, recursive failures, and invisible regressions. Teams are already deploying generated code they cannot fully audit, facing exploding inference costs and silent operational entropy as generated abstractions multiply beyond human comprehension. Copilots compress output but increase review pressure exponentially, creating a dangerous dynamic where autonomous systems scale faster than human oversight can manage. The most useful skeptics are not wrong, because they point directly at the unreviewed changes, security drift, dependency corruption, and code that nobody understands six months later. Continuous Software Generation treats those exact objections as hard design requirements rather than abstract complaints.
+      </p>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="convergence">
+    <span class="chapter-kicker">04 &mdash; Present Reality</span>
+    <h2>Ecosystem Convergence</h2>
+    
+    <div class="prose">
+      <p>
+        We are not predicting the future, but describing an operational convergence that is already underway. Coding agents, hooks, skills, tool calling, MCP integrations, validators, runtime plugins, autonomous workflows, execution environments, observability systems, AI remediation tooling, AI generated testing, and self-healing infrastructure systems already expose pieces of the new model.
+      </p>
+      <p>
+        These are not isolated trends. They are fragmented pieces of a new operational system. What is missing is not another orchestration framework, but shared conventions for portable autonomous behaviors, governance primitives, reusable validation systems, operational contracts, standardized adaptation loops, and interoperability between autonomous systems.
+      </p>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="maturity">
+    <span class="chapter-kicker">05 &mdash; Measurement</span>
+    <h2>AI Maturity Is Operational</h2>
+
+    <div class="prose">
+      <p>
+        Most companies still measure AI adoption superficially: whether developers use copilots, whether the product has AI features, whether tickets are automated, or whether there is an AI team. Those are weak signals. The deeper question is how much of the SDLC and operational surface area actually participates in governed autonomous loops.
+      </p>
+      <p>
+        This is where AI-native becomes meaningful. An AI-native company is not merely a company that uses AI. It is a company structurally designed around autonomous software participation, where workflows assume agents exist, systems expose machine-readable interfaces, governance is programmable, tooling is composable, validation is continuous, and software generation is operationalized.
+      </p>
+    </div>
+
+    <div class="maturity-comparison">
+      {maturityComparison.map((column) => (
+        <article class="maturity-column">
+          <h3>{column.title}</h3>
+          <ul class="clean-list">
+            {column.items.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+
+    <h3 class="section-subhead">A CSG Maturity Model</h3>
+    <div class="maturity-grid">
+      {maturityLevels.map((item) => (
+        <article class="maturity-card">
+          <span class="maturity-level">{item.level}</span>
+          <h4>{item.title}</h4>
+          <p>{item.body}</p>
+          <ul>
+            {item.signals.map((signal) => (
+              <li>{signal}</li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+
+    <blockquote class="maturity-note">
+      <p>Higher maturity does not mean fewer humans. It means engineering discipline moves toward system comprehension, validation, observability, governance, operational constraints, adaptation logic, and reliability engineering.</p>
+    </blockquote>
+
+    <div class="prose">
+      <p>
+        AI-native is not about features. A company can ship AI chat, copilots, agents, or retrieval systems and still behave operationally like traditional SaaS. Meanwhile, an internal platform organization with validators, autonomous remediation, policy-aware execution, adaptive CI systems, and governed loops may be far more AI-native in practice.
+      </p>
+      <p>
+        The strategic advantage is not better model access. AI-native companies compete operationally, through lower coordination latency, safer autonomous execution, continuous remediation, and composable operational intelligence.
+      </p>
+    </div>
+
+    <ul class="advantage-list">
+      {strategicAdvantages.map((advantage) => (
+        <li>{advantage}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="chapter-section" id="loop">
+    <span class="chapter-kicker">06 &mdash; Mechanics</span>
+    <h2>The Governed Core Loop</h2>
+    
+    <div class="prose">
+      <p>
+        A loop is only useful when it is strictly governed by undeniable operational mechanics. Traditional human centered lifecycle assumptions are breaking, requiring a shift from tickets and manual reviews to a loop of intent, planning, execution, validation, and adaptation. Planning must respect policy, execution must be bounded to protected paths, validation must be explicitly proven, and adaptation must be immutably auditable. Govern and observe do not merely exist as steps in a sequence, but they wrap the entire loop to ensure that autonomous actions never breach their allowed operational surface.
+      </p>
+    </div>
+
+    <div class="loop-step-grid">
+      {loopSteps.map((step) => (
+        <article class="loop-step">
+          <h4>{step.title}</h4>
+          <p>{step.body}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="comparison-grid">
+      <div class="comparison-col">
+        <h3>Traditional SDLC</h3>
+        <ul class="clean-list">
+          <li>Requirements</li>
+          <li>Tickets</li>
+          <li>Implementation</li>
+          <li>Review</li>
+          <li>Testing</li>
+          <li>Deployment</li>
+          <li>Monitoring</li>
+        </ul>
+      </div>
+      <div class="comparison-col active">
+        <h3>CSG SDLC</h3>
+        <ul class="clean-list">
+          <li>Intent</li>
+          <li>Plan</li>
+          <li>Execute</li>
+          <li>Validate</li>
+          <li>Adapt</li>
+          <li>Govern</li>
+          <li>Observe</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="governance">
+    <span class="chapter-kicker">07 &mdash; Control Surface</span>
+    <h2>Governance Is Infrastructure</h2>
+
+    <div class="prose">
+      <p>
+        Governance is not compliance theater, enterprise bureaucracy, or AI ethics marketing. In CSG, governance means operational constraints around autonomous systems: the infrastructure that defines what agents may read, change, run, spend, deploy, and escalate.
+      </p>
+      <p>
+        Autonomous coding without constraints is operationally dangerous. The faster software generation becomes, the more important operational governance becomes, because every autonomous action needs boundaries, evidence, accountability, and a path back to a known good state.
+      </p>
+    </div>
+
+    <ul class="control-list">
+      {governanceControls.map((control) => (
+        <li>{control}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="chapter-section" id="primitives">
+    <span class="chapter-kicker">08 &mdash; Architecture</span>
+    <h2>Grounding Portable Primitives</h2>
+    
+    <div class="prose">
+      <p>
+        Continuous Software Generation defines portable operational primitives that travel across existing tools, ensuring that a policy survives a model change and a validation pattern works regardless of the underlying agent. We define these primitives not through philosophical governance, but through hard operational contracts like protected paths, denied secrets, concrete validators, audit logs, and deployment gates.
+      </p>
+    </div>
+
+    <div class="feature-grid">
+      {primitives.map((primitive) => (
+        <article class="feature-card">
+          <h4>{primitive.title}</h4>
+          <p style="margin-bottom: 16px;">{primitive.body}</p>
+          <pre style="margin: 0; padding: 16px;"><code>{primitive.code}</code></pre>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="chapter-section" id="agnostic">
+    <span class="chapter-kicker">09 &mdash; Portability</span>
+    <h2>Portability Over Model Loyalty</h2>
+    
+    <div class="prose">
+      <p>
+        Model choice is merely an implementation detail, and teams will continuously switch between Claude, OpenAI, Gemini, local models, and systems that do not exist yet. The operational layer cannot depend on one vendor surviving. A policy should survive model churn, a validation loop should survive provider changes, and operational contracts should remain stable even when the intelligence layer changes.
+      </p>
+      <p>
+        Continuous Software Generation is intentionally tech-stack agnostic, model-agnostic, and ecosystem-agnostic. It is not trying to replace ecosystems. It is trying to standardize operational behavior across them.
+      </p>
+    </div>
+  </section>
+
+  <section class="chapter-section" id="boundaries">
+    <span class="chapter-kicker">10 &mdash; Boundaries</span>
+    <h2>What CSG Is Not</h2>
+
+    <div class="prose">
+      <p>
+        CSG is a convention layer for autonomous software operations. It is not an attempt to rename every AI coding workflow, and it is not a claim that autonomous systems should operate without humans. It exists because autonomous software systems require operational structure before they become operational liabilities.
+      </p>
+    </div>
+
+    <ul class="boundary-list">
+      {nonGoals.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="chapter-section" id="future">
+    <span class="chapter-kicker">11 &mdash; Implication</span>
+    <h2>The Long-Term Shift</h2>
+
+    <div class="prose">
+      <p>
+        The long-term implication of Continuous Software Generation is that software organizations stop behaving like static application factories and start behaving like continuously adaptive operational systems. The unit of engineering evolves from manually authored implementation artifacts toward governed autonomous operational loops.
+      </p>
+    </div>
+
+    <blockquote class="closing-statement">
+      <p>Software becomes continuously synthesized, continuously validated, continuously observed, continuously adapted, and continuously governed.</p>
+    </blockquote>
+  </section>
+
+</ManifestLayout>
+
+<style>
+  .terminal-card {
+    background: #0a0a0a;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 24px 0 48px;
+    font-family: var(--font-mono);
+  }
+
+  .terminal-header {
+    background: var(--bg-raised);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot.red { background: #ff5f56; }
+  .dot.amber { background: #ffbd2e; }
+  .dot.green { background: #27c93f; }
+
+  .terminal-header .title {
+    margin-left: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .terminal-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .trace-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  @media (min-width: 640px) {
+    .trace-row {
+      flex-direction: row;
+      gap: 24px;
+    }
+  }
+
+  .trace-row .label {
+    color: #77b7ff;
+    font-size: 13px;
+    min-width: 90px;
+  }
+
+  .trace-row .value {
+    color: var(--accent);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .hero-note {
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.6;
+    max-width: 640px;
+    margin-top: -24px;
+    margin-bottom: 48px;
+  }
+
+  .maturity-comparison {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 40px 0 56px;
+  }
+
+  .maturity-column {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-raised);
+  }
+
+  .maturity-column:nth-child(3) {
+    border-color: var(--line-strong);
+    background: linear-gradient(180deg, rgba(34,34,34,0.4) 0%, rgba(17,17,17,0) 100%);
+  }
+
+  .maturity-column h3 {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .maturity-column .clean-list {
+    gap: 10px;
+  }
+
+  .maturity-column .clean-list li {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .section-subhead {
+    color: var(--text);
+    font-size: 20px;
+    margin: 8px 0 24px;
+  }
+
+  .maturity-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 0 0 48px;
+  }
+
+  @media (min-width: 640px) {
+    .maturity-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .maturity-card {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-raised);
+  }
+
+  .maturity-level {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #77b7ff;
+    margin-bottom: 12px;
+  }
+
+  .maturity-card h4 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .maturity-card p {
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+
+  .maturity-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .maturity-card li {
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.4;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .maturity-card li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--line-strong);
+  }
+
+  .maturity-note {
+    margin: 48px 0;
+  }
+
+  .loop-step-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 40px 0;
+  }
+
+  @media (min-width: 640px) {
+    .loop-step-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .loop-step {
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-raised);
+  }
+
+  .loop-step h4 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .loop-step p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 40px 0;
+  }
+
+  @media (min-width: 640px) {
+    .comparison-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .comparison-col {
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-raised);
+  }
+
+  .comparison-col.active {
+    border-color: var(--line-strong);
+    background: linear-gradient(180deg, rgba(34,34,34,0.4) 0%, rgba(17,17,17,0) 100%);
+  }
+
+  .comparison-col h3 {
+    margin-bottom: 24px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+
+  .comparison-col.active h3 {
+    color: var(--text);
+  }
+
+  .clean-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .clean-list li {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+  }
+
+  .clean-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--line-strong);
+  }
+
+  .comparison-col.active .clean-list li {
+    color: var(--accent);
+  }
+
+  .comparison-col.active .clean-list li::before {
+    color: var(--dim);
+  }
+
+  .control-list,
+  .boundary-list,
+  .advantage-list {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  @media (min-width: 640px) {
+    .control-list,
+    .boundary-list,
+    .advantage-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .control-list li,
+  .boundary-list li,
+  .advantage-list li {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-raised);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.4;
+    min-height: 64px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  .closing-statement {
+    margin-top: 40px;
+  }
+</style>

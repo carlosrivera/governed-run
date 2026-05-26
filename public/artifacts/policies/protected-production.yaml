@@ -1,0 +1,134 @@
+kind: csg.policy
+name: protected-production
+version: 0.2.0
+intent: Prevent autonomous agents from mutating production infrastructure, secrets, billing, auth, or live data without explicit human approval and passing validators.
+riskLevel: high
+
+scope:
+  repositories:
+    - governed-run/*
+  environments:
+    - production
+    - staging
+  defaultDecision: escalate
+
+allowedScope:
+  readOnly:
+    - src/**
+    - tests/**
+    - docs/**
+    - public/artifacts/**
+  mutableWithoutApproval:
+    - tests/**
+    - fixtures/**
+    - docs/**
+    - public/artifacts/**
+  mutableWithValidators:
+    - src/**
+    - apps/*/src/**
+
+blockedScope:
+  paths:
+    - .env
+    - .env.*
+    - secrets/**
+    - infra/secrets/**
+    - infra/production/**
+    - apps/*/src/billing/runtime/**
+    - apps/*/src/auth/permissions/**
+    - db/migrations/**
+    - deploy/**
+    - .github/workflows/deploy*.yml
+  operations:
+    - deploy
+    - rotate_secret
+    - read_secret_value
+    - drop_table
+    - truncate_table
+    - backfill_production
+    - change_payment_provider
+    - disable_validator
+    - force_push
+
+requiredValidators:
+  default:
+    - typecheck
+    - unit
+  productionBehavior:
+    - unit
+    - integration
+    - contract
+  billing:
+    - billing-contract
+  coverage:
+    - coverage-guardian
+  migration:
+    - migration_dry_run
+    - rollback_plan
+
+decisionRules:
+  - id: secrets_are_never_read
+    when:
+      anyPathMatches:
+        - .env
+        - .env.*
+        - secrets/**
+        - infra/secrets/**
+    decision: deny
+    escalation: security_owner
+
+  - id: production_infra_requires_human
+    when:
+      anyPathMatches:
+        - infra/production/**
+        - deploy/**
+        - .github/workflows/deploy*.yml
+    decision: escalate
+    escalation: platform_owner
+
+  - id: billing_runtime_requires_contracts
+    when:
+      anyPathMatches:
+        - apps/*/src/billing/**
+    decision: escalate
+    requiredValidators:
+      - billing-contract
+    escalation: billing_owner
+
+  - id: migrations_require_dry_run_and_rollback
+    when:
+      anyPathMatches:
+        - db/migrations/**
+    decision: escalate
+    requiredValidators:
+      - migration_dry_run
+      - rollback_plan
+    escalation: database_owner
+
+  - id: source_changes_require_validation
+    when:
+      anyPathMatches:
+        - src/**
+        - apps/*/src/**
+    decision: allow_after_validation
+    requiredValidators:
+      - typecheck
+      - unit
+
+evidence:
+  required:
+    - intent
+    - changed_files
+    - policy_decisions
+    - validator_results
+    - execution_trace
+    - remaining_risk
+
+escalation:
+  when:
+    - blocked path is required
+    - secret value appears in output
+    - production behavior changes without a contract validator
+    - required validator cannot run
+    - remediation fails twice
+  to: human reviewer
